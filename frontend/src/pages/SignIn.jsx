@@ -7,7 +7,7 @@ import {
   signInSuccess,
   signInFailure,
 } from "../redux/user/userSlice";
-import OAuth from "../components/OAuth";
+import { OAuth } from "../components";
 
 export default function SignIn() {
   // Estado local para gestionar datos del formulario

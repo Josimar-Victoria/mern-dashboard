@@ -1,8 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { About, Dashboard, Home, Projects, SignIn, SignUp } from './pages';
-import Header from './components/Header';
-import FooterCom from './components/Footer';
-import PrivateRoute from './components/PrivateRoute';
+import { FooterCom, Header, PrivateRoute } from './components';
 
 
 export default function App() {

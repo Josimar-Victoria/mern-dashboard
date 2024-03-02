@@ -1,0 +1,11 @@
+export { default as DashSidebar } from "./DashSidebar";
+export { default as DashProfile } from "./DashProfile";
+export { default as DashPosts } from "./DashPosts";
+export { default as DashUsers } from "./DashUsers";
+export { default as DashComments } from "./DashComments";
+export { default as DashboardComp } from "./DashboardComp";
+export { default as Header } from "./Header";
+export { default as OAuth } from "./OAuth";
+export { default as ThemeProvider } from "./ThemeProvider";
+export { default as FooterCom } from "./Footer";
+export { default as PrivateRoute } from "./PrivateRoute";
