@@ -59,7 +59,7 @@ export default function SignUp() {
       // Verifica el estado de la respuesta.
       if (response.status === 201) {
         // Redirige al usuario al dashboard si el registro es exitoso.
-        navigate("/dashboard");
+        navigate("/");
       } else {
         // Establece el mensaje de error si la respuesta no es exitosa.
         setErrorMessage(data.message);

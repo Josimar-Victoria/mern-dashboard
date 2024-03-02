@@ -1,81 +1,67 @@
 import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  signInStart,
+  signInSuccess,
+  signInFailure,
+} from "../redux/user/userSlice";
 
 export default function SignIn() {
+  // Estado local para gestionar datos del formulario
   const [formData, setFormData] = useState({});
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [loading, setLoading] = useState(false);
+
+  // Obtener estado global del usuario desde Redux
+  const { loading, error: errorMessage } = useSelector((state) => state.user);
+
+  // Dispatch para despachar acciones de Redux
+  const dispatch = useDispatch();
+
+  // Hook de navegación
   const navigate = useNavigate();
 
-  /**
-   * Maneja los cambios en los campos del formulario.
-   * @param {Event} e - Objeto de evento del cambio.
-   */
+  // Función para manejar cambios en los campos de entrada del formulario
   const handleChange = (e) => {
-    // Actualiza el estado del formulario con el nuevo valor del campo.
-    // Elimina espacios en blanco alrededor del valor.
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
-    //console.log(e.target.value);
   };
 
-  /**
-   * Maneja el envío del formulario de registro.
-   * @param {Event} e - Objeto de evento del envío del formulario.
-   */
+  // Función para manejar el envío del formulario de inicio de sesión
   const handleSubmit = async (e) => {
-    // Evita el comportamiento predeterminado de envío del formulario.
     e.preventDefault();
 
-    // Establece el estado de carga a true para mostrar un indicador de carga.
-    setLoading(true);
-
-    // Restablece cualquier mensaje de error previo.
-    setErrorMessage(null);
-
-    // Verifica que todos los campos requeridos estén completos.
-    if (!formData.password || !formData.email) {
-      // Muestra un mensaje de error si algún campo está incompleto.
-      return setErrorMessage("Por favor, completa todos los campos requeridos");
+    // Verificar si los campos requeridos no están vacíos
+    if (!formData.email || !formData.password) {
+      return dispatch(signInFailure("Please fill all the fields"));
     }
 
     try {
-      // Realiza una solicitud al endpoint de registro del servidor.
-      const response = await fetch("/api/auth/signin", {
+      // Iniciar la acción de inicio de sesión
+      dispatch(signInStart());
+
+      // Realizar solicitud POST al servidor para iniciar sesión
+      const res = await fetch("/api/auth/signin", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        // Convierte el estado del formulario a una cadena JSON para enviarlo.
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
-      // Parsea la respuesta JSON de la solicitud.
-      const data = await response.json();
+      // Obtener datos de la respuesta
+      const data = await res.json();
 
-      // console.log(data);
-
-      // Verifica el estado de la respuesta.
-      if (response.ok) {
-        // Redirige al usuario al dashboard si el registro es exitoso.
-        navigate("/dashboard");
-      } else {
-        // Establece el mensaje de error si la respuesta no es exitosa.
-        setErrorMessage(data.message);
-      }
-
-      // Establece el mensaje de error si la propiedad 'success' en los datos es falsa.
+      // Manejar la respuesta del servidor
       if (data.success === false) {
-        setErrorMessage(data.message);
+        dispatch(signInFailure(data.message));
       }
 
-      // Establece el estado de carga a false después de completar la solicitud.
-      setLoading(false);
-    } catch (err) {
-      // Maneja errores de la solicitud y establece el mensaje de error correspondiente.
-      console.log(err);
-      setErrorMessage(err.message);
-      setLoading(false);
+      if (res.ok) {
+        // Despachar acción de éxito y redirigir al usuario
+        dispatch(signInSuccess(data));
+        navigate("/");
+      }
+    } catch (error) {
+      // Manejar errores durante el proceso
+      dispatch(signInFailure(error.message));
     }
   };
 
