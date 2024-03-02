@@ -1,12 +1,13 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { About, Dashboard, Home, Projects, SignIn, SignUp } from './pages';
+import Header from './components/Header';
 
 
 export default function App() {
   return (
     <BrowserRouter>
       {/* <ScrollToTop /> */}
-      {/* <Header /> */}
+      <Header />
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/about' element={<About />} />
