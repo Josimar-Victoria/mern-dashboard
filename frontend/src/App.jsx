@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { About, Dashboard, Home, Projects, SignIn, SignUp } from './pages';
 import Header from './components/Header';
+import FooterCom from './components/Footer';
 
 
 export default function App() {
@@ -26,7 +27,7 @@ export default function App() {
         <Route path='/projects' element={<Projects />} />
         {/* <Route path='/post/:postSlug' element={<PostPage />} /> */}
       </Routes>
-      {/* <Footer /> */}
+      <FooterCom />
     </BrowserRouter>
   )
 }
