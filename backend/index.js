@@ -3,8 +3,15 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 
 import userRoutes from "./routes/user.route.js";
+import authRoutes from "./routes/auth.route.js";
 
 dotenv.config();
+
+const PORT = 8000;
+const app = express();
+
+app.use(express.json());
+// app.use(cookieParser());
 
 // process.env.MONGODB_CONNECT
 mongoose
@@ -18,11 +25,10 @@ mongoose
     console.log(err);
   });
 
-const app = express();
-const PORT = 8000;
 
 app.listen(PORT, () => {
   console.log(`Servidor escuchando en http://localhost:${PORT}`);
 });
 
-app.use("/api/users",userRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/auth", authRoutes);
