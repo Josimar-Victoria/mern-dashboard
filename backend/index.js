@@ -2,6 +2,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 
 // Importar módulos de rutas
 import userRoutes from "./routes/user.route.js";
@@ -18,6 +19,9 @@ const app = express();
 
 // Middleware para analizar las solicitudes JSON
 app.use(express.json());
+
+// Middleware para analizar cookies
+app.use(cookieParser());
 
 // Conectar a la base de datos MongoDB
 mongoose
@@ -37,7 +41,7 @@ app.listen(PORT, () => {
 });
 
 // Definir rutas para usuarios y autenticación
-app.use("/api/users", userRoutes);
+app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 
 // Middleware de manejo de errores

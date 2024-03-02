@@ -1,6 +1,7 @@
-export const errorHendler = (statasCode, message) => {
+// Función para crear objetos de error personalizados
+export const errorHendler = (statusCode, message) => {
   const error = new Error();
-  error.statusCode = statasCode;
+  error.statusCode = statusCode;
   error.message = message;
   return error;
 };
