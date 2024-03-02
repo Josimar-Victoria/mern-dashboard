@@ -44,11 +44,7 @@ export const updateUsersController = async (req, res, next) => {
     }
     // Valida el formato del nombre de usuario (solo letras y números)
     if (!req.body.username.match(/^[a-zA-Z0-9]+$/)) {
-      return next(
-        res
-          .status(400)
-          .json({ message: "Username can only contain letters and numbers" })
-      );
+      res.status(400).json({ message: "Username can only contain letters and numbers" });
     }
   }
   try {

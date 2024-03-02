@@ -13,6 +13,15 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase";
+import {
+  updateStart,
+  updateSuccess,
+  updateFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+  deleteUserFailure,
+  signoutSuccess,
+} from "../redux/user/userSlice";
 
 export default function DashProfile() {
   const { currentUser, error, loading } = useSelector((state) => state.user);
@@ -27,8 +36,6 @@ export default function DashProfile() {
   const [formData, setFormData] = useState({});
   const filePickerRef = useRef();
   const dispatch = useDispatch();
-
-  console.log(imageFileUploadProgress, imageFileUploadError);
 
   // Función para manejar el cambio de imagen
   const handleImageChange = (e) => {
@@ -87,19 +94,58 @@ export default function DashProfile() {
     );
   };
 
+  //Maneja el cambio en los campos de un formulario y actualiza el estado de los datos del formulario.
+  const handleChange = (e) => {
+    // Actualiza el estado del formulario con el nuevo valor del campo modificado
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setUpdateUserError(null);
+    setUpdateUserSuccess(null);
+    if (Object.keys(formData).length === 0) {
+      setUpdateUserError("No changes made");
+      return;
+    }
+    try {
+      dispatch(updateStart());
+      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        dispatch(updateFailure(data.message));
+        setUpdateUserError(data.message);
+      } else {
+        dispatch(updateSuccess(data));
+        setUpdateUserSuccess("User's profile updated successfully");
+      }
+    } catch (error) {
+      dispatch(updateFailure(error.message));
+      setUpdateUserError(error.message);
+    }
+  };
+
   return (
-    <div className='max-w-lg mx-auto p-3 w-full'>
-      <h1 className='my-7 text-center font-semibold text-3xl'>Profile</h1>
-      <form onSubmit='' className='flex flex-col gap-4'>
+    <div className="max-w-lg mx-auto p-3 w-full">
+      <h1 className="my-7 text-center font-semibold text-3xl">Profile</h1>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
-          type='file'
-          accept='image/*'
+          type="file"
+          accept="image/*"
           onChange={handleImageChange}
           ref={filePickerRef}
           hidden
         />
         <div
-          className='relative w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full'
+          className="relative w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full"
           onClick={() => filePickerRef.current.click()}
         >
           {imageFileUploadProgress && (
@@ -109,9 +155,9 @@ export default function DashProfile() {
               strokeWidth={5}
               styles={{
                 root: {
-                  width: '100%',
-                  height: '100%',
-                  position: 'absolute',
+                  width: "100%",
+                  height: "100%",
+                  position: "absolute",
                   top: 0,
                   left: 0,
                 },
@@ -125,77 +171,77 @@ export default function DashProfile() {
           )}
           <img
             src={imageFileUrl || currentUser.profilePicture}
-            alt='user'
+            alt="user"
             className={`rounded-full w-full h-full object-cover border-8 border-[lightgray] ${
               imageFileUploadProgress &&
               imageFileUploadProgress < 100 &&
-              'opacity-60'
+              "opacity-60"
             }`}
           />
         </div>
         {imageFileUploadError && (
-          <Alert color='failure'>{imageFileUploadError}</Alert>
+          <Alert color="failure">{imageFileUploadError}</Alert>
         )}
         <TextInput
-          type='text'
-          id='username'
-          placeholder='username'
+          type="text"
+          id="username"
+          placeholder="username"
           defaultValue={currentUser.username}
-          onChange=''
+          onChange={handleChange}
         />
         <TextInput
-          type='email'
-          id='email'
-          placeholder='email'
+          type="email"
+          id="email"
+          placeholder="email"
           defaultValue={currentUser.email}
-          onChange=''
+          onChange={handleChange}
         />
         <TextInput
-          type='password'
-          id='password'
-          placeholder='password'
-          onChange=''
+          type="password"
+          id="password"
+          placeholder="password"
+          onChange={handleChange}
         />
         <Button
-          type='submit'
-          gradientDuoTone='purpleToBlue'
+          type="submit"
+          gradientDuoTone="purpleToBlue"
           outline
           disabled={loading || imageFileUploading}
         >
-          {loading ? 'Loading...' : 'Update'}
+          {loading ? "Loading..." : "Update"}
         </Button>
         {currentUser.isAdmin && (
-          <Link to={'/create-post'}>
+          <Link to={"/create-post"}>
             <Button
-              type='button'
-              gradientDuoTone='purpleToPink'
-              className='w-full'
+              type="button"
+              gradientDuoTone="purpleToPink"
+              className="w-full"
             >
               Create a post
             </Button>
           </Link>
         )}
       </form>
-      <div className='text-red-500 flex justify-between mt-5'>
-        <span onClick={() => setShowModal(true)} className='cursor-pointer'>
+      <div className="text-red-500 flex justify-between mt-5">
+        <span onClick={() => setShowModal(true)} className="cursor-pointer">
           Delete Account
         </span>
-        <span onClick='' className='cursor-pointer'>
+        <span onClick="" className="cursor-pointer">
           Sign Out
         </span>
       </div>
       {updateUserSuccess && (
-        <Alert color='success' className='mt-5'>
+        <Alert color="success" className="mt-5">
           {updateUserSuccess}
         </Alert>
       )}
       {updateUserError && (
-        <Alert color='failure' className='mt-5'>
+        <Alert color="failure" className="mt-5">
           {updateUserError}
         </Alert>
       )}
       {error && (
-        <Alert color='failure' className='mt-5'>
+        <Alert color="failure" className="mt-5">
           {error}
         </Alert>
       )}
@@ -203,20 +249,20 @@ export default function DashProfile() {
         show={showModal}
         onClose={() => setShowModal(false)}
         popup
-        size='md'
+        size="md"
       >
         <Modal.Header />
         <Modal.Body>
-          <div className='text-center'>
-            <HiOutlineExclamationCircle className='h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto' />
-            <h3 className='mb-5 text-lg text-gray-500 dark:text-gray-400'>
+          <div className="text-center">
+            <HiOutlineExclamationCircle className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
+            <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
               Are you sure you want to delete your account?
             </h3>
-            <div className='flex justify-center gap-4'>
-              <Button color='failure' onClick=''>
+            <div className="flex justify-center gap-4">
+              <Button color="failure" onClick="">
                 Yes, I'm sure
               </Button>
-              <Button color='gray' onClick={() => setShowModal(false)}>
+              <Button color="gray" onClick={() => setShowModal(false)}>
                 No, cancel
               </Button>
             </div>
