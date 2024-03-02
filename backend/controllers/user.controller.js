@@ -44,7 +44,9 @@ export const updateUsersController = async (req, res, next) => {
     }
     // Valida el formato del nombre de usuario (solo letras y números)
     if (!req.body.username.match(/^[a-zA-Z0-9]+$/)) {
-      res.status(400).json({ message: "Username can only contain letters and numbers" });
+      res
+        .status(400)
+        .json({ message: "Username can only contain letters and numbers" });
     }
   }
   try {
@@ -67,6 +69,36 @@ export const updateUsersController = async (req, res, next) => {
     res.status(200).json(rest);
   } catch (error) {
     // Pasa cualquier error al siguiente middleware
+    next(error);
+  }
+};
+
+//Controlador para eliminar un usuario.
+export const deleteUsersController = async (req, res, next) => {
+  // Verifica si el usuario actual tiene permisos de administrador o está intentando eliminar su propio usuario.
+  if (!req.user.isAdmin && req.user.id !== req.params.userId) {
+    res.status(403).json("You are not allowed to delete this user");
+  }
+  try {
+    // Elimina al usuario según su ID.
+    await User.findByIdAndDelete(req.params.userId);
+    res.status(200).json("User has been deleted");
+  } catch (error) {
+    // Pasa cualquier error al siguiente middleware.
+    next(error);
+  }
+};
+
+// Controlador para cerrar sesión de un usuario.
+export const signout = (req, res, next) => {
+  try {
+    // Borra la cookie de acceso y responde con un mensaje de éxito.
+    res
+      .clearCookie("access_token")
+      .status(200)
+      .json("User has been signed out");
+  } catch (error) {
+    // Pasa cualquier error al siguiente middleware.
     next(error);
   }
 };

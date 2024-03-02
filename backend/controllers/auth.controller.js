@@ -19,7 +19,7 @@ export const singupAuthController = async (req, res, next) => {
       email === "" ||
       password === ""
     ) {
-      next(errorHendler(400, "All fields are required"));
+      res.status(400).json({ message: "All fields are required" });
     }
 
     // Hashear la contraseña
@@ -50,7 +50,7 @@ export const signinAuthController = async (req, res, next) => {
 
   // Verificar campos requeridos
   if (!email || !password || email === "" || password === "") {
-    next(errorHendler(400, "All fields are required"));
+    res.status(400).json({ message: "All fields are required" });
   }
 
   try {
@@ -59,7 +59,7 @@ export const signinAuthController = async (req, res, next) => {
 
     // Si el usuario no se encuentra, devolver un error
     if (!validUser) {
-      return next(errorHendler(404, "User not found"));
+      res.status(400).json({ message: "User not found" });
     }
 
     // Validar la contraseña utilizando bcrypt
@@ -67,7 +67,7 @@ export const signinAuthController = async (req, res, next) => {
 
     // Si la contraseña no es válida, devolver un error
     if (!validPassword) {
-      return next(errorHendler(400, "Invalid password"));
+      res.status(400).json({ message: "Invalid password" });
     }
 
     // Generar un token JWT
