@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { About, Dashboard, Home, Projects, SignIn, SignUp } from './pages';
 import Header from './components/Header';
 import FooterCom from './components/Footer';
+import PrivateRoute from './components/PrivateRoute';
 
 
 export default function App() {
@@ -14,11 +15,10 @@ export default function App() {
         <Route path='/about' element={<About />} />
         <Route path='/sign-in' element={<SignIn />} />
         <Route path='/sign-up' element={<SignUp />} />
-        <Route path='/dashboard' element={<Dashboard />} />
         {/* <Route path='/search' element={<Search />} /> */}
-        {/* <Route element={<PrivateRoute />}>
+        <Route element={<PrivateRoute />}>
           <Route path='/dashboard' element={<Dashboard />} />
-        </Route> */}
+        </Route>
         {/* <Route element={<OnlyAdminPrivateRoute />}>
           <Route path='/create-post' element={<CreatePost />} />
           <Route path='/update-post/:postId' element={<UpdatePost />} />
