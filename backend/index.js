@@ -2,7 +2,9 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 
-dotenv.config()
+import userRoutes from "./routes/user.route.js";
+
+dotenv.config();
 
 // process.env.MONGODB_CONNECT
 mongoose
@@ -11,12 +13,16 @@ mongoose
   )
   .then(() => {
     console.log("Mongoose is connected");
-  }).catch(err => {
+  })
+  .catch((err) => {
     console.log(err);
   });
 
 const app = express();
+const PORT = 8000;
 
-app.listen(3000, () => {
-  console.log("Server is running on port http://localhost/3000");
+app.listen(PORT, () => {
+  console.log(`Servidor escuchando en http://localhost:${PORT}`);
 });
+
+app.use("/api/users",userRoutes);
