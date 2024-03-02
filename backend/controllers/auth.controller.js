@@ -88,3 +88,73 @@ export const signinAuthController = async (req, res, next) => {
     next(error);
   }
 };
+
+// Controlador para iniciar sesión o crear usuario  con google
+export const googleAuthController = async (req, res, next) => {
+  // Obtener datos del usuario desde la solicitud
+  const { email, name, googlePhotoUrl } = req.body;
+
+  try {
+    // Verificar si el usuario ya existe en la base de datos
+    const user = await User.findOne({ email });
+
+    if (user) {
+      // Generar token JWT para el usuario existente
+      const token = jwt.sign(
+        { id: user._id },
+        "HgKiasklqi7KAQI1hoq1"
+      );
+
+      // Eliminar la contraseña de la respuesta
+      const { password, ...rest } = user._doc;
+
+      // Enviar respuesta al cliente con token y datos del usuario
+      res
+        .status(200)
+        .cookie("access_token", token, {
+          httpOnly: true,
+        })
+        .json(rest);
+    } else {
+      // Generar una contraseña aleatoria
+      const generatedPassword =
+        Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8);
+
+      // Hash de la contraseña
+      const hashedPassword = bcrypt.hashSync(generatedPassword, 10);
+
+      // Crear un nuevo usuario en la base de datos
+      const newUser = new User({
+        username:
+          name.toLowerCase().split(" ").join("") +
+          Math.random().toString(9).slice(-4),
+        email,
+        password: hashedPassword,
+        profilePicture: googlePhotoUrl,
+      });
+
+      await newUser.save();
+
+      // Generar token JWT para el nuevo usuario
+      const token = jwt.sign(
+        { id: newUser._id, isAdmin: newUser.isAdmin },
+        process.env.JWT_SECRET
+      );
+
+      // Eliminar la contraseña de la respuesta
+      const { password, ...rest } = newUser._doc;
+
+      // Enviar respuesta al cliente con token y datos del nuevo usuario
+      res
+        .status(201)
+        .cookie("access_token", token, {
+          httpOnly: true,
+        })
+        .json(rest);
+    }
+  } catch (error) {
+    // Manejar errores durante el proceso
+    next(error);
+  }
+};
