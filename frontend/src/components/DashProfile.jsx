@@ -100,9 +100,11 @@ export default function DashProfile() {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
+  // Maneja la presentación del formulario para actualizar el perfil de usuario.
   const handleSubmit = async (e) => {
     e.preventDefault();
     setUpdateUserError(null);
+    // Verifica si no se han realizado cambios en el formulario
     setUpdateUserSuccess(null);
     if (Object.keys(formData).length === 0) {
       setUpdateUserError("No changes made");
@@ -110,6 +112,7 @@ export default function DashProfile() {
     }
     try {
       dispatch(updateStart());
+      // Envía una solicitud PUT para actualizar el perfil del usuario
       const res = await fetch(`/api/user/update/${currentUser._id}`, {
         method: "PUT",
         headers: {
@@ -118,16 +121,20 @@ export default function DashProfile() {
         body: JSON.stringify(formData),
       });
 
+      // Analiza los datos de respuesta
       const data = await res.json();
 
+      // Verifica si la solicitud fue exitosa
       if (!res.ok) {
         dispatch(updateFailure(data.message));
         setUpdateUserError(data.message);
       } else {
+        // Actualiza el estado del usuario y muestra un mensaje de éxito
         dispatch(updateSuccess(data));
         setUpdateUserSuccess("User's profile updated successfully");
       }
     } catch (error) {
+      // Maneja cualquier error durante el proceso de actualización
       dispatch(updateFailure(error.message));
       setUpdateUserError(error.message);
     }
