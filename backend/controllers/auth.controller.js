@@ -1,7 +1,8 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
+import { errorHendler } from "../utils/error.js";
 
-export const singupAuthController = async (req, res) => {
+export const singupAuthController = async (req, res, next) => {
   console.log(req.body);
   const { username, email, password } = req.body;
 
@@ -14,7 +15,7 @@ export const singupAuthController = async (req, res) => {
       email === "" ||
       password === ""
     ) {
-      return res.status(400).json({ message: "Please fill in all fields" });
+      next(errorHendler(400, "All fields are required"));
     }
     const hashedPaawords = bcrypt.hashSync(password, 10);
 
@@ -28,6 +29,6 @@ export const singupAuthController = async (req, res) => {
     res.status(201).json({ message: "User created successfully" });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Server error" });
+    next(error);
   }
 }; //
