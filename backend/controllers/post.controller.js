@@ -38,7 +38,7 @@ export const createPostController = async (req, res, next) => {
 };
 
 // Controlador para obtener todas las publicaciones con opciones de filtrado y paginación
-export const getAllPostController = async (req, res) => {
+export const getAllPostController = async (req, res, next) => {
   try {
     // Obtener el índice de inicio de las publicaciones (por defecto, 0)
     const startIndex = parseInt(req.query.startIndex) || 0;
@@ -87,6 +87,47 @@ export const getAllPostController = async (req, res) => {
       totalPosts,
       lastMonthPosts,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Controlador para eliminar una publicación
+export const deletePostController = async (req, res, next) => {
+  if (!req.user.isAdmin || req.user.id !== req.params.userId) {
+    res.status(403).json("You are not allowed to delete this post");
+  }
+  try {
+    // Intentar buscar y eliminar la publicación por su ID
+    await Post.findByIdAndDelete(req.params.postId);
+    // Si la eliminación es exitosa, devolver un código de estado 200 (Éxito) y un mensaje de confirmación
+    res.status(200).json("The post has been deleted");
+  } catch (error) {
+    // Si hay un error al intentar eliminar la publicación, pasar el error al siguiente middleware
+    next(error);
+  }
+};
+
+// Controlador para actualizar una publicación
+export const updatePostController = async (req, res, next) => {
+  // Verificar si el usuario no es un administrador o si el usuario no coincide con el propietario de la publicación
+  if (!req.user.isAdmin || req.user.id !== req.params.userId) {
+    res.status(403).json("You are not allowed to update this post");
+  }
+  try {
+    const updatedPost = await Post.findByIdAndUpdate(
+      req.params.postId,
+      {
+        $set: {
+          title: req.body.title,
+          content: req.body.content,
+          category: req.body.category,
+          image: req.body.image,
+        },
+      },
+      { new: true }
+    );
+    res.status(200).json(updatedPost);
   } catch (error) {
     next(error);
   }

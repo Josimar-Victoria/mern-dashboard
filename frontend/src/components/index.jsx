@@ -9,4 +9,9 @@ export { default as OAuth } from "./OAuth";
 export { default as ThemeProvider } from "./ThemeProvider";
 export { default as FooterCom } from "./Footer";
 export { default as PrivateRoute } from "./PrivateRoute";
-export { default as OnlyAdminPrivateRoute } from "./OnlyAdminPrivateRoute"
+export { default as OnlyAdminPrivateRoute } from "./OnlyAdminPrivateRoute";
+export { default as PostCard } from "./PostCard";
+export {default as CallToAction} from "./CallToAction";
+export {default as Comment} from "./Comment";
+export {default as CommentSection} from "./CommentSection";
+export {default as ScrollToTop} from "./ScrollToTop";

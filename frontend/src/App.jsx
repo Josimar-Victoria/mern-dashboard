@@ -1,13 +1,12 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { About, Dashboard, Home, Projects, SignIn, SignUp } from './pages';
-import { FooterCom, Header, OnlyAdminPrivateRoute, PrivateRoute } from './components';
-import CreatePost from './pages/CreatePost';
+import { About, CreatePost, Dashboard, Home, PostPage, Projects, SignIn, SignUp, UpdatePost } from './pages';
+import { FooterCom, Header, OnlyAdminPrivateRoute, PrivateRoute, ScrollToTop } from './components';
 
 
 export default function App() {
   return (
     <BrowserRouter>
-      {/* <ScrollToTop /> */}
+      <ScrollToTop />
       <Header />
       <Routes>
         <Route path='/' element={<Home />} />
@@ -20,11 +19,11 @@ export default function App() {
         </Route>
         <Route element={<OnlyAdminPrivateRoute />}>
           <Route path='/create-post' element={<CreatePost />} />
-          {/* <Route path='/update-post/:postId' element={<UpdatePost />} /> */}
+          <Route path='/update-post/:postId' element={<UpdatePost />} />
         </Route>
 
         <Route path='/projects' element={<Projects />} />
-        {/* <Route path='/post/:postSlug' element={<PostPage />} /> */}
+        <Route path='/post/:postSlug' element={<PostPage />} />
       </Routes>
       <FooterCom />
     </BrowserRouter>

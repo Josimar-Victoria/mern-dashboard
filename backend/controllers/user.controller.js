@@ -1,10 +1,6 @@
 import bcryptjs from "bcryptjs";
 import User from "../models/user.model.js";
 
-export const getAllUsersController = (req, res) => {
-  res.json({ message: "API IS World!" });
-};
-
 //Controlador para actualizar la información de un usuario
 export const updateUsersController = async (req, res, next) => {
   // Verifica si el usuario autenticado está intentando actualizar su propio perfil
@@ -99,6 +95,64 @@ export const signoutUserController = (req, res, next) => {
       .json("User has been signed out");
   } catch (error) {
     // Pasa cualquier error al siguiente middleware.
+    next(error);
+  }
+};
+
+export const getAllUsersController = async (req, res, next) => {
+  if (!req.user.isAdmin) {
+    return next(errorHandler(403, 'You are not allowed to see all users'));
+  }
+  try {
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    const limit = parseInt(req.query.limit) || 9;
+    const sortDirection = req.query.sort === 'asc' ? 1 : -1;
+
+    const users = await User.find()
+      .sort({ createdAt: sortDirection })
+      .skip(startIndex)
+      .limit(limit);
+
+    const usersWithoutPassword = users.map((user) => {
+      const { password, ...rest } = user._doc;
+      return rest;
+    });
+
+    const totalUsers = await User.countDocuments();
+
+    const now = new Date();
+
+    const oneMonthAgo = new Date(
+      now.getFullYear(),
+      now.getMonth() - 1,
+      now.getDate()
+    );
+    const lastMonthUsers = await User.countDocuments({
+      createdAt: { $gte: oneMonthAgo },
+    });
+
+    res.status(200).json({
+      users: usersWithoutPassword,
+      totalUsers,
+      lastMonthUsers,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export const getUserController = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      res
+        .status(404)
+        .json({ message: "User not found" });
+      
+    }
+    const { password, ...rest } = user._doc;
+    res.status(200).json(rest);
+  } catch (error) {
     next(error);
   }
 };

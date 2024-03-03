@@ -41,18 +41,57 @@ export default function DashPosts() {
     }
   }, [currentUser._id]);
 
+  // Función para cargar más publicaciones cuando el usuario hace clic en "Mostrar más"
   const handleShowMore = async () => {
+    // Obtener el índice de inicio para la próxima carga de publicaciones
     const startIndex = userPosts.length;
     try {
+      // Realizar una solicitud a la API para obtener más publicaciones del usuario actual
       const res = await fetch(
         `/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`
       );
+      // Analizar la respuesta como JSON
       const data = await res.json();
+
+      // Verificar si la respuesta es exitosa
       if (res.ok) {
+        // Actualizar las publicaciones del usuario en el estado utilizando el estado anterior (prev)
         setUserPosts((prev) => [...prev, ...data.posts]);
+        // Desactivar el botón "Mostrar más" si hay menos de 9 publicaciones en la respuesta
         if (data.posts.length < 9) {
           setShowMore(false);
         }
+      }
+    } catch (error) {
+      // Capturar y registrar cualquier error que ocurra durante la solicitud
+      console.log(error.message);
+    }
+  };
+
+  // Función para manejar la eliminación de una publicación
+  const handleDeletePost = async () => {
+    // Ocultar el modal de confirmación de eliminación
+    setShowModal(false);
+    try {
+      // Realizar una solicitud para eliminar la publicación por su ID y el ID del usuario actual
+      const res = await fetch(
+        `/api/post/deletepost/${postIdToDelete}/${currentUser._id}`,
+        {
+          method: "DELETE",
+        }
+      );
+      // Analizar la respuesta como JSON
+      const data = await res.json();
+
+      // Verificar si la respuesta no es exitosa
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        // Si la eliminación es exitosa, actualizar el estado de las publicaciones del usuario
+        // Filtrando las publicaciones que coinciden con el ID de la publicación a eliminar
+        setUserPosts((prev) =>
+          prev.filter((post) => post._id !== postIdToDelete)
+        );
       }
     } catch (error) {
       console.log(error.message);
@@ -147,7 +186,7 @@ export default function DashPosts() {
               Are you sure you want to delete this post?
             </h3>
             <div className="flex justify-center gap-4">
-              <Button color="failure" onClick="">
+              <Button color="failure" onClick={handleDeletePost}>
                 Yes, I'm sure
               </Button>
               <Button color="gray" onClick={() => setShowModal(false)}>

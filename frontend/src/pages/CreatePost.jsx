@@ -20,7 +20,7 @@ export default function CreatePost() {
   const [formData, setFormData] = useState({});
   const [publishError, setPublishError] = useState(null);
 
-  console.log(formData);
+  //console.log(formData);
 
   const navigate = useNavigate();
 
@@ -103,6 +103,7 @@ export default function CreatePost() {
       setPublishError("Something went wrong");
     }
   };
+  
   return (
     <div className="p-3 max-w-3xl mx-auto min-h-screen">
       <h1 className="text-center text-3xl my-7 font-semibold">Create a post</h1>

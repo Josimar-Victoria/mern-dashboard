@@ -3,6 +3,7 @@ import express from "express";
 import {
   deleteUsersController,
   getAllUsersController,
+  getUserController,
   signoutUserController,
   updateUsersController,
 } from "../controllers/user.controller.js";
@@ -12,10 +13,11 @@ import { verifyToken } from "../utils/verifyUser.js";
 const router = express.Router();
 
 // Definir la ruta para el usuario
-router.get("/", getAllUsersController);
+router.get("/getusers",verifyToken, getAllUsersController);
 router.put("/update/:userId", verifyToken, updateUsersController);
 router.delete("/delete/:userId", verifyToken, deleteUsersController);
 router.post("/signout", signoutUserController);
+router.get('/:userId', getUserController);
 
 // Exportar el enrutador para su uso en otras partes de la aplicación
 
