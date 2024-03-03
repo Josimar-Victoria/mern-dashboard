@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { About, CreatePost, Dashboard, Home, PostPage, Projects, SignIn, SignUp, UpdatePost } from './pages';
+import { About, CreatePost, Dashboard, Home, NotFound, PostPage, Projects, Search, SignIn, SignUp, UpdatePost } from './pages';
 import { FooterCom, Header, OnlyAdminPrivateRoute, PrivateRoute, ScrollToTop } from './components';
 
 
@@ -13,7 +13,7 @@ export default function App() {
         <Route path='/about' element={<About />} />
         <Route path='/sign-in' element={<SignIn />} />
         <Route path='/sign-up' element={<SignUp />} />
-        {/* <Route path='/search' element={<Search />} /> */}
+        <Route path='/search' element={<Search />} />
         <Route element={<PrivateRoute />}>
           <Route path='/dashboard' element={<Dashboard />} />
         </Route>
@@ -24,6 +24,7 @@ export default function App() {
 
         <Route path='/projects' element={<Projects />} />
         <Route path='/post/:postSlug' element={<PostPage />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <FooterCom />
     </BrowserRouter>
