@@ -9,3 +9,4 @@ export { default as OAuth } from "./OAuth";
 export { default as ThemeProvider } from "./ThemeProvider";
 export { default as FooterCom } from "./Footer";
 export { default as PrivateRoute } from "./PrivateRoute";
+export { default as OnlyAdminPrivateRoute } from "./OnlyAdminPrivateRoute"

@@ -92,6 +92,7 @@ export default function SignIn() {
                 type="email"
                 placeholder="name@company.com"
                 id="email"
+                required
                 onChange={handleChange}
               />
             </div>
@@ -101,6 +102,7 @@ export default function SignIn() {
                 type="password"
                 placeholder="**********"
                 id="password"
+                required
                 onChange={handleChange}
               />
             </div>
