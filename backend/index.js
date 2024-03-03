@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 // Importar módulos de rutas
 import userRoutes from "./routes/user.route.js";
 import authRoutes from "./routes/auth.route.js";
+import postRoutes from "./routes/post.route.js";
 
 // Cargar variables de entorno desde el archivo .env
 dotenv.config();
@@ -43,6 +44,7 @@ app.listen(PORT, () => {
 // Definir rutas para usuarios y autenticación
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
+app.use('/api/post', postRoutes);
 
 // Middleware de manejo de errores
 app.use((err, req, res, next) => {
