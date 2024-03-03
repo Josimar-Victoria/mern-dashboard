@@ -3,12 +3,13 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import path from "path";
 
 // Importar módulos de rutas
 import userRoutes from "./routes/user.route.js";
 import authRoutes from "./routes/auth.route.js";
 import postRoutes from "./routes/post.route.js";
-import commentRoutes from './routes/comment.route.js';
+import commentRoutes from "./routes/comment.route.js";
 
 // Cargar variables de entorno desde el archivo .env
 dotenv.config();
@@ -37,6 +38,8 @@ mongoose
     console.log(err);
   });
 
+const __dirname = path.resolve();
+
 // Iniciar el servidor y escuchar en el puerto especificado
 app.listen(PORT, () => {
   console.log(`Server listening at http://localhost:${PORT}`);
@@ -45,8 +48,14 @@ app.listen(PORT, () => {
 // Definir rutas para usuarios y autenticación
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
-app.use('/api/post', postRoutes);
-app.use('/api/comment', commentRoutes);
+app.use("/api/post", postRoutes);
+app.use("/api/comment", commentRoutes);
+
+app.use(express.static(path.join(__dirname, '/frontend/dist')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'));
+});
 
 // Middleware de manejo de errores
 app.use((err, req, res, next) => {

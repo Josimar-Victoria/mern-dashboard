@@ -6,7 +6,9 @@
   "type": "module",
   "scripts": {
     "start": "node backend/index.js",
-    "server": "nodemon backend/index.js"
+    "server": "nodemon backend/index.js",
+    "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend",
+    "test": "npm run test:frontend && npm run test:backend"
   },
   "keywords": [],
   "author": "",
