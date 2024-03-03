@@ -1,11 +1,11 @@
-import { Avatar, Button, Dropdown, Navbar, TextInput } from 'flowbite-react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { AiOutlineSearch } from 'react-icons/ai';
-import { FaMoon, FaSun } from 'react-icons/fa';
-import { useSelector, useDispatch } from 'react-redux';
-import { toggleTheme } from '../redux/theme/themeSlice';
-import { signoutSuccess } from '../redux/user/userSlice';
-import { useEffect, useState } from 'react';
+import { Avatar, Button, Dropdown, Navbar, TextInput } from "flowbite-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { AiOutlineSearch } from "react-icons/ai";
+import { FaMoon, FaSun } from "react-icons/fa";
+import { useSelector, useDispatch } from "react-redux";
+import { toggleTheme } from "../redux/theme/themeSlice";
+import { signoutSuccess } from "../redux/user/userSlice";
+import { useEffect, useState } from "react";
 
 export default function Header() {
   const path = useLocation().pathname;
@@ -14,9 +14,32 @@ export default function Header() {
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state.user);
   const { theme } = useSelector((state) => state.theme);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const handleSignout = () => {}
+  //Maneja la acción de cerrar sesión de un usuario.
+  const handleSignout = async () => {
+    try {
+      // Realiza una solicitud POST al servidor para cerrar sesión.
+      const res = await fetch("/api/user/signout", {
+        method: "POST",
+      });
+
+      // Lee la respuesta del servidor como JSON.
+      const data = await res.json();
+
+      // Verifica si la respuesta indica un error.
+      if (!res.ok) {
+        // En caso de error, imprime el mensaje de error en la consola.
+        console.log(data.message);
+      } else {
+        // En caso de éxito, despacha la acción de cierre de sesión.
+        dispatch(signoutSuccess());
+      }
+    } catch (error) {
+      // Captura cualquier error durante el proceso y lo imprime en la consola.
+      console.log(error.message);
+    }
+  };
 
   return (
     <Navbar className="border-b-2">
@@ -56,24 +79,24 @@ export default function Header() {
             arrowIcon={false}
             inline
             label={
-              <Avatar alt='user' img={currentUser.profilePicture} rounded />
+              <Avatar alt="user" img={currentUser.profilePicture} rounded />
             }
           >
             <Dropdown.Header>
-              <span className='block text-sm'>@{currentUser.username}</span>
-              <span className='block text-sm font-medium truncate'>
+              <span className="block text-sm">@{currentUser.username}</span>
+              <span className="block text-sm font-medium truncate">
                 {currentUser.email}
               </span>
             </Dropdown.Header>
-            <Link to={'/dashboard?tab=profile'}>
+            <Link to={"/dashboard?tab=profile"}>
               <Dropdown.Item>Profile</Dropdown.Item>
             </Link>
             <Dropdown.Divider />
             <Dropdown.Item onClick={handleSignout}>Sign out</Dropdown.Item>
           </Dropdown>
         ) : (
-          <Link to='/sign-in'>
-            <Button gradientDuoTone='purpleToBlue' outline>
+          <Link to="/sign-in">
+            <Button gradientDuoTone="purpleToBlue" outline>
               Sign In
             </Button>
           </Link>

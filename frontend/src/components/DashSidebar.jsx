@@ -19,6 +19,31 @@ export default function DashSidebar() {
   const { currentUser } = useSelector((state) => state.user);
   const [tab, setTab] = useState("");
 
+   //Maneja la acción de cerrar sesión de un usuario.
+   const handleSignout = async () => {
+    try {
+      // Realiza una solicitud POST al servidor para cerrar sesión.
+      const res = await fetch("/api/user/signout", {
+        method: "POST",
+      });
+
+      // Lee la respuesta del servidor como JSON.
+      const data = await res.json();
+
+      // Verifica si la respuesta indica un error.
+      if (!res.ok) {
+        // En caso de error, imprime el mensaje de error en la consola.
+        console.log(data.message);
+      } else {
+        // En caso de éxito, despacha la acción de cierre de sesión.
+        dispatch(signoutSuccess());
+      }
+    } catch (error) {
+      // Captura cualquier error durante el proceso y lo imprime en la consola.
+      console.log(error.message);
+    }
+  };
+
   return (
     <Sidebar className="w-full md:w-56">
       <Sidebar.Items>
@@ -73,7 +98,7 @@ export default function DashSidebar() {
           <Sidebar.Item
             icon={HiArrowSmRight}
             className="cursor-pointer"
-            onClick=""
+            onClick={handleSignout}
           >
             Sign Out
           </Sidebar.Item>

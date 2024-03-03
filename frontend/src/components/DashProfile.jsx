@@ -168,6 +168,31 @@ export default function DashProfile() {
     }
   };
 
+  //Maneja la acción de cerrar sesión de un usuario.
+  const handleSignout = async () => {
+    try {
+      // Realiza una solicitud POST al servidor para cerrar sesión.
+      const res = await fetch('/api/user/signout', {
+        method: 'POST',
+      });
+  
+      // Lee la respuesta del servidor como JSON.
+      const data = await res.json();
+  
+      // Verifica si la respuesta indica un error.
+      if (!res.ok) {
+        // En caso de error, imprime el mensaje de error en la consola.
+        console.log(data.message);
+      } else {
+        // En caso de éxito, despacha la acción de cierre de sesión.
+        dispatch(signoutSuccess());
+      }
+    } catch (error) {
+      // Captura cualquier error durante el proceso y lo imprime en la consola.
+      console.log(error.message);
+    }
+  };
+
   return (
     <div className="max-w-lg mx-auto p-3 w-full">
       <h1 className="my-7 text-center font-semibold text-3xl">Profile</h1>
@@ -261,7 +286,7 @@ export default function DashProfile() {
         <span onClick={() => setShowModal(true)} className="cursor-pointer">
           Delete Account
         </span>
-        <span onClick="" className="cursor-pointer">
+        <span onClick={handleSignout} className="cursor-pointer">
           Sign Out
         </span>
       </div>

@@ -90,7 +90,7 @@ export const deleteUsersController = async (req, res, next) => {
 };
 
 // Controlador para cerrar sesión de un usuario.
-export const signout = (req, res, next) => {
+export const signoutUserController = (req, res, next) => {
   try {
     // Borra la cookie de acceso y responde con un mensaje de éxito.
     res

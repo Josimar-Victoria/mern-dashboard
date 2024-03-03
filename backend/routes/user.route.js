@@ -3,6 +3,7 @@ import express from "express";
 import {
   deleteUsersController,
   getAllUsersController,
+  signoutUserController,
   updateUsersController,
 } from "../controllers/user.controller.js";
 import { verifyToken } from "../utils/verifyUser.js";
@@ -14,6 +15,7 @@ const router = express.Router();
 router.get("/", getAllUsersController);
 router.put("/update/:userId", verifyToken, updateUsersController);
 router.delete("/delete/:userId", verifyToken, deleteUsersController);
+router.post("/signout", signoutUserController);
 
 // Exportar el enrutador para su uso en otras partes de la aplicación
 
