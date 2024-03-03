@@ -12,11 +12,11 @@ export const singupAuthController = async (req, res, next) => {
     !username ||
     !email ||
     !password ||
-    username === '' ||
-    email === '' ||
-    password === ''
+    username === "" ||
+    email === "" ||
+    password === ""
   ) {
-    res.status(400).json({ message: "AAll fields are required" });
+    res.status(400).json({ message: "All fields are required" });
   }
 
   const hashedPassword = bcrypt.hashSync(password, 10);
@@ -29,11 +29,10 @@ export const singupAuthController = async (req, res, next) => {
 
   try {
     await newUser.save();
-    res.json('Signup successful');
+    res.json("Signup successful");
   } catch (error) {
     next(error);
   }
-
 };
 
 // Controlador para el inicio de sesión de usuarios
@@ -63,7 +62,10 @@ export const signinAuthController = async (req, res, next) => {
     }
 
     // Generar un token JWT
-    const token = jwt.sign({ id: validUser._id }, "HgKiasklqi7KAQI1hoq1");
+    const token = jwt.sign(
+      { id: validUser._id, isAdmin: validUser.isAdmin },
+      "HgKiasklqi7KAQI1hoq1"
+    );
 
     // Extraer la contraseña del objeto de usuario y enviar el resto de los datos
     const { password: pass, ...rest } = validUser._doc;
@@ -93,7 +95,7 @@ export const googleAuthController = async (req, res, next) => {
     if (user) {
       // Generar token JWT para el usuario existente
       const token = jwt.sign(
-        { id: user._id },
+        { id: user._id, isAdmin: user.isAdmin },
         "HgKiasklqi7KAQI1hoq1"
       );
 
