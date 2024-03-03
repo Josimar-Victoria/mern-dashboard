@@ -140,6 +140,34 @@ export default function DashProfile() {
     }
   };
 
+  //Maneja la eliminación de un usuario.
+  const handleDeleteUser = async () => {
+    // Oculta el modal de confirmación de eliminación.
+    setShowModal(false);
+    try {
+      // Iniloadingcia la acción de eliminación de usuario.
+      dispatch(deleteUserStart());
+      // Realiza una solicitud DELETE al servidor para eliminar el usuario.
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+      });
+      // Lee la respuesta del servidor como JSON.
+      const data = await res.json();
+
+      // Verifica si la respuesta indica un error.
+      if (!res.ok) {
+        // Actualiza el estado con un mensaje de error.
+        dispatch(deleteUserFailure(data.message));
+      } else {
+        // Actualiza el estado con la confirmación exitosa.
+        dispatch(deleteUserSuccess(data));
+      }
+    } catch (error) {
+      // Captura cualquier error durante el proceso y actualiza el estado con el mensaje de error.
+      dispatch(deleteUserFailure(error.message));
+    }
+  };
+
   return (
     <div className="max-w-lg mx-auto p-3 w-full">
       <h1 className="my-7 text-center font-semibold text-3xl">Profile</h1>
@@ -266,7 +294,7 @@ export default function DashProfile() {
               Are you sure you want to delete your account?
             </h3>
             <div className="flex justify-center gap-4">
-              <Button color="failure" onClick="">
+              <Button color="failure" onClick={handleDeleteUser}>
                 Yes, I'm sure
               </Button>
               <Button color="gray" onClick={() => setShowModal(false)}>

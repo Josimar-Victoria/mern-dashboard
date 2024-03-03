@@ -6,42 +6,34 @@ import jwt from "jsonwebtoken";
 
 // Controlador para el registro de usuarios
 export const singupAuthController = async (req, res, next) => {
-  console.log(req.body);
   const { username, email, password } = req.body;
 
+  if (
+    !username ||
+    !email ||
+    !password ||
+    username === '' ||
+    email === '' ||
+    password === ''
+  ) {
+    res.status(400).json({ message: "AAll fields are required" });
+  }
+
+  const hashedPassword = bcrypt.hashSync(password, 10);
+
+  const newUser = new User({
+    username,
+    email,
+    password: hashedPassword,
+  });
+
   try {
-    // Verificar campos requeridos
-    if (
-      !username ||
-      !email ||
-      !password ||
-      username === "" ||
-      email === "" ||
-      password === ""
-    ) {
-      res.status(400).json({ message: "All fields are required" });
-    }
-
-    // Hashear la contraseña
-    const hashedPassword = bcrypt.hashSync(password, 10);
-
-    // Crear un nuevo usuario
-    const newUser = new User({
-      username,
-      email,
-      password: hashedPassword,
-    });
-
-    // Guardar el nuevo usuario en la base de datos
     await newUser.save();
-
-    // Respuesta exitosa
-    res.status(201).json({ message: "User created successfully" });
+    res.json('Signup successful');
   } catch (error) {
-    // Manejo de errores
-    console.log(error);
     next(error);
   }
+
 };
 
 // Controlador para el inicio de sesión de usuarios
